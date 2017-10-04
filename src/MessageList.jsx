@@ -4,10 +4,14 @@ import Message from './Message.jsx';
 class MessageList extends Component {
 
     render() {
-        const messageComponents = this.props.messages.map(eachMsg => {
+              
+      let messageComponents = this.props.messages.map((eachMsg) => {
+        // let {id, username, content } = eachMsg;
           return <Message key={eachMsg.key}  username={eachMsg.username}
-        content={eachMsg.content}/>;
-        });
+        content={eachMsg.content} />
+        //  return <Message key={id} username = {username} content={content} />;
+      });
+
         console.log("Rendering <MessageList/>");
 
         return (
@@ -15,7 +19,7 @@ class MessageList extends Component {
               {messageComponents}     
             </main>
         );
-      }
     }
+}
 
 export default MessageList;
