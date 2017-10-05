@@ -7,7 +7,7 @@ class MessageList extends Component {
               
       let messageComponents = this.props.messages.map((eachMsg) => {
         // let {id, username, content } = eachMsg;
-          return <Message key={eachMsg.key}  username={eachMsg.username}
+          return <Message id={eachMsg.id} key={eachMsg.id}username={eachMsg.username}
         content={eachMsg.content} />
         //  return <Message key={id} username = {username} content={content} />;
       });
