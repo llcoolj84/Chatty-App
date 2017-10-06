@@ -8,7 +8,8 @@ export default class MessageList extends Component {
     let messages = this.props.messages.map((message) => {
       let { id, type, notification, username, content, color} = message;
 
-      if (type === "system") {
+      // choose category and return the right message to send
+      if (type === 'system') {
         return <Message 
           key={id}
           notification={notification}

@@ -4,7 +4,7 @@ import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
 //declare new webSocket for connections on port 3001
-var webSocket = new WebSocket("ws://localhost:3001");
+var webSocket = new WebSocket('ws://localhost:3001');
 
 function getRandomColor() {
         var letters = '0123456789ABCDEF';
@@ -19,7 +19,7 @@ export default class App extends Component {
 
   // Send new chat message to server
   addMessage(newMessage) {
-    newMessage.type = "chat";
+    newMessage.type = 'chat';
     newMessage.color = this.state.currentColor;
     newMessage.username = this.state.currentUser;
     webSocket.send(JSON.stringify(newMessage));
@@ -33,7 +33,7 @@ export default class App extends Component {
       return;
     } else {
       //assign type property and color to system for notification 
-      newUserName.type = "system";
+      newUserName.type = 'system';
       newUserName.color = getRandomColor();
       newUserName.oldName = currentName;
       this.setState( {currentUser: newUserName.username} );
@@ -79,6 +79,7 @@ export default class App extends Component {
 
   };
 
+  //rendering of the html in react
   render() {
     return (
       <div>
