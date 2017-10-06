@@ -15,12 +15,12 @@ function getRandomColor() {
         return color;
     }
 
-
 export default class App extends Component {
 
   // Send new chat message to server
   addMessage(newMessage) {
     newMessage.type = "chat";
+    newMessage.color = this.state.currentColor;
     newMessage.username = this.state.currentUser;
     webSocket.send(JSON.stringify(newMessage));
   };
@@ -32,6 +32,7 @@ export default class App extends Component {
     if (newUserName.username === currentName) {
       return;
     } else {
+      //assign type property and color to system for notification 
       newUserName.type = "system";
       newUserName.color = getRandomColor();
       newUserName.oldName = currentName;
@@ -62,9 +63,11 @@ export default class App extends Component {
     webSocket.onmessage = (broadcast) => {
       let broadcastMessage = JSON.parse(broadcast.data);
       switch(broadcastMessage.type) {
-        case 'connected':
-          let { count } = broadcastMessage;
+        case 'connection':
+          let { count, user } = broadcastMessage;
           this.setState( {users: count} );
+          broadcastMessage.notification = (`**${user}** is now connected`);
+          // console.log(`${username}`);
         case 'system':
           let { username, oldName } = broadcastMessage;
           broadcastMessage.notification = (`**${oldName}** changed username to **${username}**`);
@@ -83,9 +86,9 @@ export default class App extends Component {
       <div>
         <nav className='navbar'>
           <h1 className='navbar navbar-brand'>Chatty App</h1>
-          <span className='navbar-users'></span>
+          <span className='navbar-users'>Users online: {this.state.users}</span>
         </nav>
-        <MessageList messages={this.state.messages }/>
+        <MessageList messages={this.state.messages}/>
         <ChatBar
           onNewMessage={this.addMessage.bind(this)}
           onNewUserName={this.addUserName.bind(this)}

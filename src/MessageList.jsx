@@ -7,7 +7,7 @@ export default class MessageList extends Component {
     // Iterate through each chat message from parent component(s)
     let messages = this.props.messages.map((message) => {
       let { id, type, notification, username, content, color} = message;
-      console.log(message.color);
+
       if (type === "system") {
         return <Message 
           key={id}
@@ -20,16 +20,16 @@ export default class MessageList extends Component {
           content={content}
           color={color}
           />
-          console.log(message.color);
       };
     });
 
     // Format output from above array map method
     return (
       <div id='message'>
-        <Message />
+        <Message messages={this.props.message }/>
         {messages}
       </div>
+  
     );
   };
 };
