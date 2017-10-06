@@ -1,50 +1,68 @@
+// import react and components 
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
-import Navigation from './Navigation.jsx';
-let newSocket = new WebSocket("ws:localhost:3001");
 
-class App extends Component {
+//declare new webSocket for connections on port 3001
+var webSocket = new WebSocket("ws://localhost:3001");
+
+function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
+export default class App extends Component {
+
+  // Send new chat message to server
+  addMessage(newMessage) {
+    newMessage.type = "chat";
+    newMessage.username = this.state.currentUser;
+    webSocket.send(JSON.stringify(newMessage));
+  };
+
+  // Send notification of name change to server
+  addUserName(newUserName) {
+    let currentName = this.state.currentUser;
+    // Checks if new username is identical to current one
+    if (newUserName.username === currentName) {
+      return;
+    } else {
+      newUserName.type = "system";
+      newUserName.color = getRandomColor();
+      newUserName.oldName = currentName;
+      this.setState( {currentUser: newUserName.username} );
+      this.setState( {currentColor: newUserName.color} );
+      webSocket.send(JSON.stringify(newUserName));
+    };
+  };
+
   constructor(props) {
     super(props);
-    this.chatBox=this.chatBox.bind(this);
-
     this.state = {
-      currentUser: {name: "Bob"},
-      messages: [] // messages will be added here as they get added 
+      currentUser: 'Anonymous',
+      messages: [],
+      currentColor: 'black'
+
     };
-  }
+  };
 
-  chatBox(newUser, newMessage) {
-
-    let msg = {
-      username: newUser,
-      content: newMessage
-    }; 
-    
-    newSocket.send(JSON.stringify(msg));
-  }
-
-//componentDidMount() is invoked immediately after a component is mounted. Initialization that requires DOM nodes should go here. If you need to load data from a remote endpoint, this is a good place to instantiate the network request. Setting state in this method will trigger a re-rendering.
+  // Called after component is rendered and attached to DOM, but not yet visible.
   componentDidMount() {
-    newSocket.addEventListener('message', (event) =>{
-      const allMessages = this.state.messages.concat(JSON.parse(event.data));
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: allMessages});
-      console.log(allMessages);//just checking to see if it was given unique id
-      document.getElementById('chatbarMessage').value = '';
-    })    
 
-    newSocket.onopen = function(){
-        newSocket.send(JSON.stringify({content: 'You are now connected.'}));
-    }
-    
- // Receive all broadcasts and update state accordingly
-  newSocket.onmessage = (broadcast) => {
-    let broadcastMessage = JSON.parse(broadcast.data);
+    webSocket.onopen = (webSocket) => {
+      console.log('Successfully connected to the Chatty Server back end');
+    };
 
-      switch(broadcastMessage.category) {
-        case 'connection':
+    // Receive all broadcasts and update state accordingly
+    webSocket.onmessage = (broadcast) => {
+      let broadcastMessage = JSON.parse(broadcast.data);
+      switch(broadcastMessage.type) {
+        case 'connected':
           let { count } = broadcastMessage;
           this.setState( {users: count} );
         case 'system':
@@ -57,18 +75,24 @@ class App extends Component {
           break;
       };
     };
+
   };
+
   render() {
-    console.log("Rendering <App/>");
     return (
       <div>
-        <ChatBar  chatBox={this.chatBox} currentUser= {this.state.currentUser}/>
-          <MessageList messages={this.state.messages} />
-        <Navigation/>
+        <nav className='navbar'>
+          <h1 className='navbar navbar-brand'>Chatty App</h1>
+          <span className='navbar-users'></span>
+        </nav>
+        <MessageList messages={this.state.messages }/>
+        <ChatBar
+          onNewMessage={this.addMessage.bind(this)}
+          onNewUserName={this.addUserName.bind(this)}
+          />
       </div>
     );
-  }
+  };
 
-}
+};
 
-export default App;

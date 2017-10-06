@@ -1,25 +1,35 @@
 import React, {Component} from 'react';
 import Message from './Message.jsx';
 
-class MessageList extends Component {
+export default class MessageList extends Component {
+  render() {
 
-    render() {
-              
-      let messageComponents = this.props.messages.map((eachMsg) => {
-        // let {id, username, content } = eachMsg;
-          return <Message id={eachMsg.id} key={eachMsg.id}username={eachMsg.username}
-        content={eachMsg.content} />
-        //  return <Message key={id} username = {username} content={content} />;
-      });
+    // Iterate through each chat message from parent component(s)
+    let messages = this.props.messages.map((message) => {
+      let { id, type, notification, username, content, color} = message;
+      console.log(message.color);
+      if (type === "system") {
+        return <Message 
+          key={id}
+          notification={notification}
+          />
+      } else {
+        return <Message
+          key={id}
+          username={username}
+          content={content}
+          color={color}
+          />
+          console.log(message.color);
+      };
+    });
 
-        console.log("Rendering <MessageList/>");
-
-        return (
-            <main className="messages">
-              {messageComponents}     
-            </main>
-        );
-    }
-}
-
-export default MessageList;
+    // Format output from above array map method
+    return (
+      <div id='message'>
+        <Message />
+        {messages}
+      </div>
+    );
+  };
+};

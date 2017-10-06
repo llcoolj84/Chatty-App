@@ -1,30 +1,47 @@
 import React, {Component} from 'react';
 
-class ChatBar extends Component {
-  constructor(props) {
-    super(props);
-    this.onType = this.onType.bind(this);
-    
-  } 
+const $ = (className) => document.querySelector(className);
 
-  // new function 
-  onType(target) {
-
-     if(target.key === 'Enter'){
-      this.props.chatBox(document.getElementById('chatbarUsername').value,
-      document.getElementById('chatbarMessage').value);
-      document.getElementById('chatbarMessage').value = '';
-    };
-  }
-
+export default class ChatBar extends React.Component{
   render() {
-    console.log("Rendering <ChatBar/>");
     return (
-      <footer className="chatbar">
-       <input id='chatbarUsername' className="chatbar-username" defaultValue={this.props.name} placeholder="Your Name (Optional)" />
-        <input id='chatbarMessage' className="chatbar-message" placeholder="Type a message and hit ENTER" onKeyUp={this.onType} />
+      <footer className='chatbar'>
+        <input className='chatbar-username' placeholder='Your Name (Optional)'  />
+        <input className='chatbar-message' placeholder='Type a message and hit ENTER' />
       </footer>
     );
-  }
-}
-export default ChatBar;
+  };
+
+  componentDidMount() {
+
+    // Event Listener for chatbar-message
+    $('.chatbar-message').addEventListener('keypress', (e) => {
+      const username = $('.chatbar-username').value;
+
+      // Ensures message can't be blank
+      if (e.keyCode === 13 && e.target.value !== '') {
+
+        // Sets properties for new message
+        this.props.onNewMessage({
+          username: (username.length === 0) ? 'Anonymous': username,
+          content: e.target.value
+        });
+        e.target.value = '';
+      };
+    });
+
+    // Event Listener for chatbar-username
+    $('.chatbar-username').addEventListener('keypress', (e) => {
+      if (e.keyCode === 13) {
+        const username = e.target.value;
+        this.props.onNewUserName({
+          username: (username.length === 0) ? 'Anonymous': username
+        });
+      };
+    });
+
+  };
+};
+
+  
+
