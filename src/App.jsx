@@ -66,8 +66,6 @@ export default class App extends Component {
         case 'connection':
           let { count, user } = broadcastMessage;
           this.setState( {users: count} );
-          broadcastMessage.notification = (`**${user}** is now connected`);
-          // console.log(`${username}`);
         case 'system':
           let { username, oldName } = broadcastMessage;
           broadcastMessage.notification = (`**${oldName}** changed username to **${username}**`);
