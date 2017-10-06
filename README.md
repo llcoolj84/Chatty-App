@@ -14,6 +14,7 @@ npm install
 npm start
 open http://localhost:3000
 ```
+https://github.com/llcoolj84/chatty-server (MAKE SURE YOU CLONE THE WEBSOCKET SERVER FROM HERE SO YOU CAN SEE IT WORK ON MULTIPLE SCREENS" 
 
 ### Dependencies
 
